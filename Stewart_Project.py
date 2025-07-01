@@ -4,11 +4,12 @@
 #install libraries in the VSCode Terminal
 
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 #Angles related to each rotational motion
-theta = np.deg2rad(-90)  # pitch
-phi   = np.deg2rad(0)  # roll
+theta = np.deg2rad(30)  # pitch
+phi   = np.deg2rad(30)  # roll
 psi   = np.deg2rad(0)  # yaw
 
 # Base center pivot point
@@ -68,6 +69,7 @@ Q_2 = O + Rot_Matrix @ P_2
 #Point 3
 Q_3 = O + Rot_Matrix @ P_3
 
+P_points = [P_1, P_2, P_3]
 Q_points = [Q_1, Q_2, Q_3]
 B_points = [B_1, B_2, B_3]
 
@@ -78,3 +80,40 @@ for i in range(3):
     print(f"Actuator {i+1} length: {L_len:.3f} cm")
 
 #Plot of Platform with Vectors
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot base anchor points
+B_x, B_y, B_z = zip(*B_points)
+ax.scatter(B_x, B_y, B_z, color='blue', label='Base Anchors')
+
+# Plot original platform points (before rotation)
+P_x, P_y, P_z = zip(*P_points)
+ax.scatter(P_x, P_y, P_z, color='green', label='Original Platform (Unrotated)', alpha=0.5)
+
+# Plot rotated platform points
+Q_x, Q_y, Q_z = zip(*Q_points)
+ax.scatter(Q_x, Q_y, Q_z, color='red', label='Rotated Platform')
+
+# Plot actuator lines
+for i in range(3):
+    ax.plot([B_points[i][0], Q_points[i][0]],
+            [B_points[i][1], Q_points[i][1]],
+            [B_points[i][2], Q_points[i][2]],
+            'r-')
+    ax.plot([B_points[i][0], P_points[i][0]],
+            [B_points[i][1], P_points[i][1]],
+            [B_points[i][2], P_points[i][2]],
+            'g--o')
+
+# Set labels and view
+ax.set_xlabel('X [cm]')
+ax.set_ylabel('Y [cm]')
+ax.set_zlabel('Z [cm]')
+ax.set_title('Stewart Platform')
+ax.legend()
+ax.grid(True)
+ax.view_init(elev=25, azim=45)
+plt.tight_layout()
+plt.show()
