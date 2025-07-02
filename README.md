@@ -1,4 +1,4 @@
-Example of Simulations for Actuator Lengths in with changing pose
+Example of Simulations for Actuator Lengths with changing pose
 
 Pitch Only
 
