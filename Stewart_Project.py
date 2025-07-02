@@ -10,15 +10,18 @@ from mpl_toolkits.mplot3d import Axes3D
 #Angles related to each rotational motion
 theta = np.deg2rad(30)  # pitch
 phi   = np.deg2rad(30)  # roll
-psi   = np.deg2rad(0)  # yaw
+psi   = np.deg2rad(30)  # yaw
 
 # Base center pivot point
 O = np.array([0, 0, 0]) 
 
 
-#Radial Distance from Anchor points to origin of platform (in cm)
+#Radial Distance from Anchor points to origin of platform and base (in cm)
 #RDP = Radial Distance Platform
 RDP = 4
+
+#RDB = Radial Distance Base
+RDB = 7
 
 #Height at home position for anchor points
 #HAP = Height of Anchor Points
@@ -54,9 +57,9 @@ P_3 = np.array([RDP * np.cos(np.deg2rad(240)), RDP * np.sin(np.deg2rad(240)), HA
 
 # Initial Base Anchor points (matrices of [x, y, z])
 
-B_1 = np.array([RDP * np.cos(np.deg2rad(0)),   RDP * np.sin(np.deg2rad(0)),   0])
-B_2 = np.array([RDP * np.cos(np.deg2rad(120)), RDP * np.sin(np.deg2rad(120)), 0])
-B_3 = np.array([RDP * np.cos(np.deg2rad(240)), RDP * np.sin(np.deg2rad(240)), 0])
+B_1 = np.array([RDB * np.cos(np.deg2rad(0)),   RDB * np.sin(np.deg2rad(0)),   0])
+B_2 = np.array([RDB * np.cos(np.deg2rad(120)), RDB * np.sin(np.deg2rad(120)), 0])
+B_3 = np.array([RDB * np.cos(np.deg2rad(240)), RDB * np.sin(np.deg2rad(240)), 0])
 
 #Coordinates of Anchor Points with Respect to Base reference framework
 
@@ -116,4 +119,90 @@ ax.legend()
 ax.grid(True)
 ax.view_init(elev=25, azim=45)
 plt.tight_layout()
+plt.show()
+
+
+
+
+#------------------------------------------------------------------------------------------------------------
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+# Your previous definitions for RDP, HAP, B_points, P_points here...
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot static base points
+B_x, B_y, B_z = zip(*B_points)
+ax.scatter(B_x, B_y, B_z, color='blue', label='Base Anchors')
+
+# Prepare plot objects for platform points and actuator lines to update in animation
+rotated_platform_scatter = ax.scatter([], [], [], color='red', label='Rotated Platform')
+actuator_lines = [ax.plot([], [], [], 'r-')[0] for _ in range(3)]
+
+# Set labels and view
+ax.set_xlabel('X [cm]')
+ax.set_ylabel('Y [cm]')
+ax.set_zlabel('Z [cm]')
+ax.set_title('Stewart Platform Animation')
+ax.legend()
+ax.grid(True)
+ax.view_init(elev=25, azim=45)
+
+# Limits to keep the plot stable
+ax.set_xlim(-6, 6)
+ax.set_ylim(-6, 6)
+ax.set_zlim(0, 10)
+
+def rotation_matrix(roll, pitch, yaw):
+    Rz = np.array([[np.cos(yaw), -np.sin(yaw), 0],
+                   [np.sin(yaw),  np.cos(yaw), 0],
+                   [0,            0,           1]])
+    Ry = np.array([[ np.cos(pitch), 0, np.sin(pitch)],
+                   [0,              1, 0],
+                   [-np.sin(pitch), 0, np.cos(pitch)]])
+    Rx = np.array([[1, 0,             0],
+                   [0, np.cos(roll), -np.sin(roll)],
+                   [0, np.sin(roll),  np.cos(roll)]])
+    return Rz @ Ry @ Rx
+
+def init():
+    rotated_platform_scatter._offsets3d = ([], [], [])
+    for line in actuator_lines:
+        line.set_data([], [])
+        line.set_3d_properties([])
+    return actuator_lines + [rotated_platform_scatter]
+
+def update(frame):
+    # Animate pitch from 0 to 30 degrees and back sinusoidally
+    pitch = np.deg2rad(30 * np.sin(frame * 0.1))
+    roll = np.deg2rad(30 * np.sin(frame * 0.1))
+    yaw = np.deg2rad(30 * np.sin(frame * 0.1))
+    Rot_Matrix = rotation_matrix(roll, pitch, yaw)
+    
+    Q_points = [Rot_Matrix @ p for p in P_points]
+    Q_points = [q + np.array([0, 0, HAP]) for q in Q_points]  # translate to height
+    
+    # Update rotated platform points scatter
+    Q_x, Q_y, Q_z = zip(*Q_points)
+    rotated_platform_scatter._offsets3d = (Q_x, Q_y, Q_z)
+    
+    # Update actuator lines
+    for i, line in enumerate(actuator_lines):
+        x_vals = [B_points[i][0], Q_points[i][0]]
+        y_vals = [B_points[i][1], Q_points[i][1]]
+        z_vals = [B_points[i][2], Q_points[i][2]]
+        line.set_data(x_vals, y_vals)
+        line.set_3d_properties(z_vals)
+    
+    return actuator_lines + [rotated_platform_scatter]
+
+ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True, interval=50)
 plt.show()
