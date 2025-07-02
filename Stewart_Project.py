@@ -6,6 +6,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+import matplotlib.animation as Animation
 
 #Angles related to each rotational motion
 theta = np.deg2rad(30)  # pitch
@@ -126,15 +128,8 @@ plt.show()
 
 #------------------------------------------------------------------------------------------------------------
 
+#Animation of Stewart Platform Response
 
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.animation import FuncAnimation
-
-# Your previous definitions for RDP, HAP, B_points, P_points here...
 
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
@@ -182,9 +177,9 @@ def init():
 
 def update(frame):
     # Animate pitch from 0 to 30 degrees and back sinusoidally
-    pitch = np.deg2rad(30 * np.sin(frame * 0.1))
-    roll = np.deg2rad(30 * np.sin(frame * 0.1))
-    yaw = np.deg2rad(30 * np.sin(frame * 0.1))
+    pitch = np.deg2rad(40 * np.sin(frame * 0.1))
+    roll = np.deg2rad(40 * np.sin(frame * 0.1))
+    yaw = np.deg2rad(40 * np.sin(frame * 0.1))
     Rot_Matrix = rotation_matrix(roll, pitch, yaw)
     
     Q_points = [Rot_Matrix @ p for p in P_points]
@@ -200,9 +195,16 @@ def update(frame):
         y_vals = [B_points[i][1], Q_points[i][1]]
         z_vals = [B_points[i][2], Q_points[i][2]]
         line.set_data(x_vals, y_vals)
+
         line.set_3d_properties(z_vals)
     
     return actuator_lines + [rotated_platform_scatter]
 
-ani = FuncAnimation(fig, update, frames=200, init_func=init, blit=True, interval=50)
+
+ani = Animation.FuncAnimation(fig, update, frames=200, init_func=init, blit=True, interval=50)
 plt.show()
+
+
+
+
+
