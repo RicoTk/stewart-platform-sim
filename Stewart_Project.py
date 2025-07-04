@@ -35,7 +35,7 @@ RDB = 10
 HAP = 10
 
 #Initial Translation Vector (at home position)
-TransV = np.array([-3, 0, -3]) 
+TransV = np.array([0, 0, 0]) 
 
 #Full Rotation Matrix for Platform relative to Base
 def rotation_matrix(roll, pitch, yaw):
@@ -214,13 +214,13 @@ Length_Actuator3 = []
 
 def update(frame):
     # Pitch, Roll and Yaw variables (set to what it wanted)
-    pitch = np.deg2rad(15 * np.sin(frame * 0.1))
-    roll = np.deg2rad(15 * np.sin(frame * 0.1))
-    yaw = np.deg2rad(15 * np.sin(frame * 0.1))
+    pitch = np.deg2rad(0 * np.sin(frame * 0.1))
+    roll = np.deg2rad(0 * np.sin(frame * 0.1))
+    yaw = np.deg2rad(0 * np.sin(frame * 0.1))
     Rot_Matrix = rotation_matrix(roll, pitch, yaw)
 
     #Translation Vector (set to what is wanted)
-    TransV = [(2 * np.sin(frame * 0.1)), (2 * np.sin(frame * 0.1)), (2 * np.sin(frame * 0.1)) ]
+    TransV = [(0 * np.sin(frame * 0.1)), (0 * np.sin(frame * 0.1)), (0 * np.sin(frame * 0.1)) ]
     
     Q_points = [O + TransV + Rot_Matrix @ p for p in P_points]
     

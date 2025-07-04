@@ -14,7 +14,7 @@ O = np.array([0, 0, 0])
 RDP = 4
 
 #RDB = Radial Distance Base Points (in cm)
-RDB = 4
+RDB = 6
 
 
 #Height at home position for anchor points
@@ -58,6 +58,8 @@ A_6 = np.array([RDB* np.cos(np.deg2rad(270)), RDB * np.sin(np.deg2rad(240)), 0])
 
 A_points = [A_1, A_2, A_3, A_4, A_5, A_6]
 
+#Calculations of Servo arm lengths based on changed parameters
+
 #Calculating M and N constants to get phase shift 
 N_1 = 2 * np.linalg.norm(A_1) * ( (np.cos(330) *(P_1[0] - B_1[0]))  +  (np.sin(330) * (P_1[1] - B_1[1])))   
 print(N_1)
@@ -69,7 +71,14 @@ print(M_1)
 pS_1 = np.atan(N_1/M_1)
 print(pS_1)
 
-#L_0 = 
+#L_0 = 0.004
+l_0 = 11.180
+
+#alpha_0 = np.arcsin(L_0 / np.sqrt((((M_1**2) - (N_1**2))))) - pS_1
+#print(alpha_0)
+
+s_0 = np.sqrt(-1 * (np.sin(np.deg2rad(20) + pS_1) * np.sqrt(M_1**2 - N_1 **2)) + (l_0 **2 ) + (1.5 **2))
+print(s_0)
 
 
 
