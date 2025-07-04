@@ -210,10 +210,10 @@ def init():
 
 # Animation update function
 def update(frame):
-    pitch = np.deg2rad(20 * np.sin(frame * 0.1))
+    pitch = np.deg2rad(30 * np.sin(frame * 0.1))
     roll = np.deg2rad(0)
     yaw = np.deg2rad(0)
-    trans = np.array([0, 0, 2 * np.sin(frame * 0.1)])
+    trans = np.array([2 * np.sin(frame * 0.1), 0, 0])
     
     R = rotation_matrix(roll, pitch, yaw)
     Q_points = [O + trans + R @ p for p in P_points]
@@ -277,6 +277,7 @@ Delta_Actuator6 = Max_Actuator6 - Min_Actuator6
 #print(lengths_A1[:5])  # First 5 length values for actuator 1
 #print(lengths_A4[-1])  # Last value for actuator 4
 print(Max_Actuator1)
+print(Min_Actuator1)
 
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -311,91 +312,8 @@ l_0 = 11.180
 alpha_0 = 20
 
 #Calculating bigger lever arm based on a, M, N, and alpha_0 
-s_0 = np.sqrt(-1 * (np.sin(np.deg2rad(alpha_0) + pS_1) * np.sqrt(M_1**2 - N_1 **2)) + (l_0 **2 ) + (3**2))
+s_0 = np.sqrt(-1 * (np.sin(np.deg2rad(alpha_0) + pS_1) * np.sqrt(M_1**2 + N_1 **2)) + (l_0 **2 ) + (2.5**2))
 print(s_0)
 
 
 
-
-
-
-'''
-#Angles related to each rotational motion
-theta = np.deg2rad(30)  # pitch
-phi   = np.deg2rad(30)  # roll
-psi   = np.deg2rad(30)  # yaw
-
-
-#Full Rotation Matrix for Platform relative to Base
-def rotation_matrix(roll, pitch, yaw):
-    # Rotation about Z (yaw), Y (pitch), X (roll)
-    Rz = np.array([[np.cos(yaw), -np.sin(yaw), 0],
-                   [np.sin(yaw),  np.cos(yaw), 0],
-                   [0,            0,           1]])
-    
-    Ry = np.array([[ np.cos(pitch), 0, np.sin(pitch)],
-                   [0,              1, 0],
-                   [-np.sin(pitch), 0, np.cos(pitch)]])
-    
-    Rx = np.array([[1, 0,             0],
-                   [0, np.cos(roll), -np.sin(roll)],
-                   [0, np.sin(roll),  np.cos(roll)]])
-    
-    return Rz @ Ry @ Rx
-
-Rot_Matrix = rotation_matrix(phi, theta, psi)
-
-
-#lists of Anchor points (base B and platform P) and transformed platform points (Q_points)
-P_points = [P_1, P_2, P_3, P_4, P_5, P_6]
-B_points = [B_1, B_2, B_3]
-Q_points = [] 
-
-#Coordinates of Anchor Points with Respect to Base reference framework
-for i in range(6):
-    Q_points[i] = TransV + Rot_Matrix @ P_points[i]
-
-#Computation of Actuator Lengths (For this project it will most likely represent links)
-for i in range(3):
-    L_vec = Q_points[i] - B_points[i]
-    L_len = np.linalg.norm(L_vec)
-    print(f"Actuator {i+1} length: {L_len:.3f} cm")
-
-#Plot of Platform with Vectors
-
-fig = plt.figure(figsize=(10, 8))
-ax = fig.add_subplot(111, projection='3d')
-
-# Plot base anchor points
-B_x, B_y, B_z = zip(*B_points)
-ax.scatter(B_x, B_y, B_z, color='blue', label='Base Anchors')
-
-# Plot original platform points (before rotation)
-P_x, P_y, P_z = zip(*P_points)
-ax.scatter(P_x, P_y, P_z, color='green', label='Original Platform (Unrotated)', alpha=0.5)
-
-# Plot rotated platform points
-Q_x, Q_y, Q_z = zip(*Q_points)
-ax.scatter(Q_x, Q_y, Q_z, color='red', label='Rotated Platform')
-
-# Plot actuator lines
-for i in range(3):
-    ax.plot([B_points[i][0], Q_points[i][0]],
-            [B_points[i][1], Q_points[i][1]],
-            [B_points[i][2], Q_points[i][2]],
-            'r-')
-    ax.plot([B_points[i][0], P_points[i][0]],
-            [B_points[i][1], P_points[i][1]],
-            [B_points[i][2], P_points[i][2]],
-            'g--o')
-
-# Set labels and view
-ax.set_xlabel('X [cm]')
-ax.set_ylabel('Y [cm]')
-ax.set_zlabel('Z [cm]')
-ax.set_title('Stewart Platform')
-ax.legend()
-ax.grid(True)
-ax.view_init(elev=25, azim=45)
-plt.tight_layout()
-plt.show()'''
