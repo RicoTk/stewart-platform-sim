@@ -1,10 +1,6 @@
 Example of Simulations for Actuator Lengths with changing pose
 
-Pitch Only
-
-
-
-https://github.com/user-attachments/assets/63f31726-c28b-4b53-99f7-bc080c96f7a8
+https://github.com/user-attachments/assets/2c6c9a78-269e-4fb6-a3e6-98f246b9dac6
 
 
 
