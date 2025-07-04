@@ -69,10 +69,12 @@ print(M_1)
 pS_1 = np.atan(N_1/M_1)
 print(pS_1)
 
-Sin_funct = np.sin(np.linalg.norm(A_1) + pS_1)
-print(Sin_funct)
+#L_0 = 
 
-Sqrt_funct
+
+
+
+
 
 '''
 #Angles related to each rotational motion
