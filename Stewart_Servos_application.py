@@ -14,7 +14,7 @@ O = np.array([0, 0, 0])
 RDP = 4
 
 #RDB = Radial Distance Base Points (in cm)
-RDB = 7
+RDB = 4
 
 
 #Height at home position for anchor points

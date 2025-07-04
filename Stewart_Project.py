@@ -25,14 +25,14 @@ O = np.array([0, 0, 0])
 
 #Radial Distance from Anchor points to origin of platform and base (in cm)
 #RDP = Radial Distance Platform
-RDP = 4
+RDP = 5
 
 #RDB = Radial Distance Base
-RDB = 7
+RDB = 10
 
 #Height at home position for anchor points
 #HAP = Height of Anchor Points
-HAP = 5
+HAP = 10
 
 #Initial Translation Vector (at home position)
 TransV = np.array([-3, 0, -3]) 
@@ -135,6 +135,34 @@ plt.show()
 
 #Animation of Stewart Platform Poses and Actuator Dynamics
 
+# Base center pivot point
+O = np.array([0, 0, 0]) 
+
+
+#Radial Distance from Anchor points to origin of platform and base (in cm)
+#RDP = Radial Distance Platform
+RDP = 5
+
+#RDB = Radial Distance Base
+RDB = 10
+
+#Height at home position for anchor points
+#HAP = Height of Anchor Points
+HAP = 10
+
+# Initial Platform Anchor points (matrices of [x, y, z])
+P_1 = np.array([RDP * np.cos(np.deg2rad(0)),   RDP * np.sin(np.deg2rad(0)),   HAP])
+P_2 = np.array([RDP * np.cos(np.deg2rad(120)), RDP * np.sin(np.deg2rad(120)), HAP])
+P_3 = np.array([RDP * np.cos(np.deg2rad(240)), RDP * np.sin(np.deg2rad(240)), HAP])
+
+# Initial Base Anchor points (matrices of [x, y, z])
+
+B_1 = np.array([RDB * np.cos(np.deg2rad(0)),   RDB * np.sin(np.deg2rad(0)),   0])
+B_2 = np.array([RDB * np.cos(np.deg2rad(120)), RDB * np.sin(np.deg2rad(120)), 0])
+B_3 = np.array([RDB * np.cos(np.deg2rad(240)), RDB * np.sin(np.deg2rad(240)), 0])
+
+
+
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
 
@@ -156,9 +184,9 @@ ax.grid(True)
 ax.view_init(elev=25, azim=45)
 
 # Limits to keep the plot stable
-ax.set_xlim(-6, 6)
-ax.set_ylim(-6, 6)
-ax.set_zlim(0, 10)
+ax.set_xlim(-15, 15)
+ax.set_ylim(-15, 15)
+ax.set_zlim(0, 15)
 
 def rotation_matrix(roll, pitch, yaw):
     Rz = np.array([[np.cos(yaw), -np.sin(yaw), 0],
@@ -186,13 +214,13 @@ Length_Actuator3 = []
 
 def update(frame):
     # Pitch, Roll and Yaw variables (set to what it wanted)
-    pitch = np.deg2rad(0 * np.sin(frame * 0.1))
-    roll = np.deg2rad(0 * np.sin(frame * 0.1))
-    yaw = np.deg2rad(0 * np.sin(frame * 0.1))
+    pitch = np.deg2rad(15 * np.sin(frame * 0.1))
+    roll = np.deg2rad(15 * np.sin(frame * 0.1))
+    yaw = np.deg2rad(15 * np.sin(frame * 0.1))
     Rot_Matrix = rotation_matrix(roll, pitch, yaw)
 
     #Translation Vector (set to what is wanted)
-    TransV = [(3 * np.sin(frame * 0.1)), 0, (3 * np.sin(frame * 0.1)) ]
+    TransV = [(2 * np.sin(frame * 0.1)), (2 * np.sin(frame * 0.1)), (2 * np.sin(frame * 0.1)) ]
     
     Q_points = [O + TransV + Rot_Matrix @ p for p in P_points]
     
